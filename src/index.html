@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Check In / Check Out</title>
+        <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="../assets/css/style.css">
+    </head>
+    <body>
+        <h2>Grupo de Cirugia Pediatrica</h2>
+        <br>
+        <div class="jumbotron">
+            <div>
+                <label>Fecha y hora actuales:</label>
+                <input id="today" class="input-group-text" type="datetime" />
+            </div>
+            <div>
+                <input class="input-group-text" type="text" value="Type something here..."/>
+            </div>
+            <div>
+                <input class="input-group-text" type="button" id="action-btn" value="Query" />
+            </div>
+            
+            <div>
+                <input id="todaysDate" class="input-group-text" type="date" />
+            </div>
+            <div>
+                <input id="now" class="input-group-text" type="time" />
+            </div>
+        </div>
+
+        
+        <br/>
+        <div id="hour"></div>
+        <table id="table" border="1">
+            <tbody>
+                
+            </tbody>
+        </table>
+    </body>
+    <script>
+       function timeNow(i) {
+            var d = new Date(),
+                h = (d.getHours()<10?'0':'') + d.getHours(),
+                m = (d.getMinutes()<10?'0':'') + d.getMinutes();
+            i.value = h + ':' + m;
+        }
+        function dateTimeNow(i) {
+            var d = new Date(),
+                dd = (d.getDate()<10?'0':'') + d.getDate(),
+                mm = (d.getMonth()<10?'0':'') + d.getMonth(),
+                yyyy = (d.getFullYear()<10?'0':'') + d.getFullYear(),
+                h = (d.getHours()<10?'0':'') + d.getHours(),
+                m = (d.getMinutes()<10?'0':'') + d.getMinutes();
+            i.value = dd + '/' + mm + '/' + yyyy + ' ' + h + ':' + m;
+        }
+        
+
+        dateTimeNow(document.querySelector("#today"));
+        timeNow(document.querySelector("#now"));
+
+        document.querySelector("#todaysDate").valueAsDate = new Date();
+        document.getElementById("todaysDate").readOnly = true;
+        document.getElementById("now").readOnly = true;        
+        
+        var database = require("../database.js");
+        function el(selector) {
+            return document.getElementById(selector);
+        }
+
+        el('action-btn').addEventListener('click', function(){
+        // Get the mysql service
+        
+        database.getFirstTenRows('SELECT * from Users', function(rows){
+            var html = '';
+
+            rows.forEach(function(row){
+                html += '<tr>';
+                html += '<td>';
+                html += row.id;
+                html += '</td>';
+                html += '<td>';
+                html += row.userName;
+                html += '</td>';
+                html += '</tr>';
+                console.log(row);
+            });
+
+            document.querySelector('#table > tbody').innerHTML = html;
+        });
+        },false);
+    </script>
+</html>
